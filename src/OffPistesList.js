@@ -12,24 +12,17 @@ import {
   FormControlLabel,
   Checkbox,
   FormLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button
 } from '@material-ui/core';
-import GoogleMapReact from 'google-map-react';
 import { NAME, SKI_DIFFICULTY } from './constants/sorting-types.js';
 import getSortedArray from './util/getSortedArray.js';
-import formatGoogleMapsLineArray from './util/formatGoogleMapsLineArray.js';
-import { GOOGLE_MAPS_API } from './constants/api.js';
+import GeodataMap from './GeodataMap.js';
 
 const OffPistes = props => {
   const { classes } = props;
 
   const [offPistes, changeOffPistes] = useState([]);
   const [sortingType, changeSortingType] = useState(null);
-  const [isPisteLineDialogOpen, changeIsPisteLineDialogOpen] = useState(false);
+  const [isMapOpen, changeIsMapOpen] = useState(false);
   const [currentPisteGeoData, changeCurrentPisteGeoData] = useState(null);
 
   parseAndRefreshOffPistes(changeOffPistes);
@@ -61,36 +54,12 @@ const OffPistes = props => {
               label="Ski Difficulty"
             />
           </FormGroup>
-          <List component="nav" aria-label="main mailbox folders">
-            {offPistes.map(offPiste => renderOffPisteItem(offPiste, changeIsPisteLineDialogOpen, changeCurrentPisteGeoData))}
+          <List component="nav" aria-label="offPistes">
+            {offPistes.map(offPiste => renderOffPisteItem(offPiste, changeIsMapOpen, changeCurrentPisteGeoData))}
           </List>
         </Container>
       </main>
-      <Dialog onClose={() => changeIsPisteLineDialogOpen(false)} aria-labelledby="customized-dialog-title" open={isPisteLineDialogOpen}>
-        <DialogTitle id="customized-dialog-title">
-          {'Piste Line'}
-        </DialogTitle>
-        <DialogContent>
-          {currentPisteGeoData ?
-            <div style={{ height: 300, width: 400 }}>
-              <GoogleMapReact
-                bootstrapURLKeys={{ key: GOOGLE_MAPS_API }}
-                yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={google => handleGoogleMapApi(google, currentPisteGeoData)}
-                defaultCenter={getFirstPositionInLine(currentPisteGeoData)}
-                defaultZoom={13}
-              >
-              </GoogleMapReact>
-            </div> : <Typography>
-              {'No lines available'}
-            </Typography>}
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={() => changeIsPisteLineDialogOpen(false)} color="primary">
-            {'Close'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <GeodataMap data={currentPisteGeoData} isOpened={isMapOpen} onChangeOpened={changeIsMapOpen} />
     </React.Fragment>
   )
 }
@@ -100,13 +69,13 @@ async function parseAndRefreshOffPistes(changeOffPistes) {
   changeOffPistes(offPistes)
 }
 
-function renderOffPisteItem (offPiste, changeIsPisteLineDialogOpen, changeCurrentPisteGeoData) {
+function renderOffPisteItem (offPiste, changeIsMapOpen, changeCurrentPisteGeoData) {
   const { name, short_description, ski_difficulty, geo_data } = offPiste;
 
   return (
     <div key={name}>
-      <ListItem k button alignItems="flex-start" onClick={() => {
-        changeIsPisteLineDialogOpen(true);
+      <ListItem button alignItems="flex-start" onClick={() => {
+        changeIsMapOpen(true);
         changeCurrentPisteGeoData(geo_data)
       }}>
         <ListItemText
@@ -124,38 +93,12 @@ function renderOffPisteItem (offPiste, changeIsPisteLineDialogOpen, changeCurren
   )
 }
 
-function getFirstPositionInLine(currentPisteGeoData) {
-  if (!currentPisteGeoData || !currentPisteGeoData.coordinates) return;
-  return {
-    lat: currentPisteGeoData.coordinates[0][0][1],
-    lng: currentPisteGeoData.coordinates[0][0][0],
-  };
-}
-
 function onSortingChecked(type, sortingType, offPistes, changeSortingType, changeOffPistes) {
   if (sortingType !== type) {
     const sortedOffPistes = getSortedArray(offPistes, type, true);
     changeSortingType(type);
     changeOffPistes(sortedOffPistes)
   }
-}
-
-function handleGoogleMapApi(google, currentPisteGeoData) {
-  if (!currentPisteGeoData) return;
-  const { coordinates } = currentPisteGeoData;
-  const formatedLineArray = formatGoogleMapsLineArray(coordinates);
-
-  formatedLineArray.forEach(formatedLine => {
-    const line = new google.maps.Polyline({
-      path: formatedLine,
-      geodesic: true,
-      strokeColor: '#33BD4E',
-      strokeOpacity: 1,
-      strokeWeight: 5
-    });
-
-    line.setMap(google.map);
-  })
 }
 
 export default OffPistes;
