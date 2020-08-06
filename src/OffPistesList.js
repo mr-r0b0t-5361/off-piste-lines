@@ -6,15 +6,11 @@ import {
   Container,
   Typography,
   Toolbar,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  FormLabel,
 } from '@material-ui/core';
-import { NAME, SKI_DIFFICULTY } from './constants/sorting-types.js';
 import getSortedArray from './util/getSortedArray.js';
 import GeodataMap from './GeodataMap.js';
 import OffPisteItem from './OffPistesItem.js';
+import SortingControl from './SortingControl.js';
 
 const OffPistes = props => {
   const { classes } = props;
@@ -38,21 +34,7 @@ const OffPistes = props => {
       </AppBar>
       <main>
         <Container className={classes.cardGrid} maxWidth="md">
-          <FormGroup row>
-            <FormLabel style={{ marginRight: 15 }} component="legend">{'Sort by: '}</FormLabel>
-            <FormControlLabel
-              control={
-                <Checkbox checked={sortingType === NAME} onChange={() => onSortingChecked(NAME, sortingType, offPistes, changeSortingType, changeOffPistes)} value="checked" />
-              }
-              label="Name"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox checked={sortingType === SKI_DIFFICULTY} onChange={() => onSortingChecked(SKI_DIFFICULTY, sortingType, offPistes, changeSortingType, changeOffPistes)} value="checked" />
-              }
-              label="Ski Difficulty"
-            />
-          </FormGroup>
+          <SortingControl type={sortingType} onChangeType={type => onSortingChecked(type, sortingType, offPistes, changeSortingType, changeOffPistes)} />
           <List component="nav" aria-label="offPistes">
             {offPistes.map(offPiste =>
               <OffPisteItem
