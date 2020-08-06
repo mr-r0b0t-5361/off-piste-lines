@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormGroup, FormControlLabel, Checkbox, FormLabel } from '@material-ui/core';
-import { NAME, SKI_DIFFICULTY } from './constants/sorting-types.js';
+import { NAME, SKI_DIFFICULTY } from '../constants/sorting-types.js';
 
 const SortingControl = ({ type, onChangeType }) => {
   return (

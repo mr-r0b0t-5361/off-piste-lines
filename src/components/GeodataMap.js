@@ -8,8 +8,8 @@ import {
   Button
 } from '@material-ui/core';
 import GoogleMapReact from 'google-map-react';
-import formatGoogleMapsLineArray from './util/formatGoogleMapsLineArray.js';
-import { GOOGLE_MAPS_API } from './constants/api.js';
+import formatGoogleMapsLineArray from '../util/formatGoogleMapsLineArray.js';
+import { GOOGLE_MAPS_API } from '../constants/api.js';
 
 const GeodataMap = props => {
   const { data, isOpened, onChangeOpened } = props;

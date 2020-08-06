@@ -5,8 +5,7 @@ const OffPisteItem = ({offPiste, changeIsMapOpen, changeCurrentPisteGeoData}) =>
   const { name, short_description, ski_difficulty, geo_data } = offPiste;
 
   return (
-    <div key={name}>
-      <ListItem button alignItems="flex-start" onClick={() => {
+      <ListItem key={name} button alignItems="flex-start" onClick={() => {
         changeIsMapOpen(true);
         changeCurrentPisteGeoData(geo_data)
       }}>
@@ -21,7 +20,6 @@ const OffPisteItem = ({offPiste, changeIsMapOpen, changeCurrentPisteGeoData}) =>
             </Typography>
           </React.Fragment>} />
       </ListItem>
-    </div>
   )
 }
 
