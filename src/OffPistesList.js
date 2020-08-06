@@ -3,8 +3,6 @@ import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   List,
-  ListItem,
-  ListItemText,
   Container,
   Typography,
   Toolbar,
@@ -16,6 +14,7 @@ import {
 import { NAME, SKI_DIFFICULTY } from './constants/sorting-types.js';
 import getSortedArray from './util/getSortedArray.js';
 import GeodataMap from './GeodataMap.js';
+import OffPisteItem from './OffPistesItem.js';
 
 const OffPistes = props => {
   const { classes } = props;
@@ -55,7 +54,11 @@ const OffPistes = props => {
             />
           </FormGroup>
           <List component="nav" aria-label="offPistes">
-            {offPistes.map(offPiste => renderOffPisteItem(offPiste, changeIsMapOpen, changeCurrentPisteGeoData))}
+            {offPistes.map(offPiste =>
+              <OffPisteItem
+                offPiste={offPiste}
+                changeIsMapOpen={changeIsMapOpen}
+                changeCurrentPisteGeoData={changeCurrentPisteGeoData} />)}
           </List>
         </Container>
       </main>
@@ -67,30 +70,6 @@ const OffPistes = props => {
 async function parseAndRefreshOffPistes(changeOffPistes) {
   const offPistes = await require('./assets/off-pistes.json');
   changeOffPistes(offPistes)
-}
-
-function renderOffPisteItem (offPiste, changeIsMapOpen, changeCurrentPisteGeoData) {
-  const { name, short_description, ski_difficulty, geo_data } = offPiste;
-
-  return (
-    <div key={name}>
-      <ListItem button alignItems="flex-start" onClick={() => {
-        changeIsMapOpen(true);
-        changeCurrentPisteGeoData(geo_data)
-      }}>
-        <ListItemText
-          primary={name}
-          secondary={<React.Fragment>
-            <Typography>
-              {short_description}
-            </Typography>
-            <Typography>
-              {`Ski difficulty: ${ski_difficulty}`}
-            </Typography>
-          </React.Fragment>} />
-      </ListItem>
-    </div>
-  )
 }
 
 function onSortingChecked(type, sortingType, offPistes, changeSortingType, changeOffPistes) {
